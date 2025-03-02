@@ -30,9 +30,39 @@ async function run() {
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
+
+    //user related apis============================================
+    const userCollection = client.db("tutorSheba").collection("users");
+
+    //user post
+    app.post("/user", async (req, res) => {
+      const user = req.body;
+      const query = { email: user.email };
+      const existingUser = await userCollection.findOne(query);
+      if (existingUser) {
+        return res.send({
+          message: "user already exists",
+          insertedId: null,
+        });
+      }
+      const result = await userCollection.insertOne(user);
+      res.send(result);
+    });
+
+    //all users
+    app.get("/allUsers", async (req, res) => {
+      const result = await userCollection.find().toArray();
+      res.send(result);
+    });
+
+    //user get by email
+    app.get("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await userCollection.findOne(query);
+      res.send(user);
+    });
   } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
   }
 }
 run().catch(console.dir);
