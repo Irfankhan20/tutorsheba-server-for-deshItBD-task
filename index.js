@@ -71,6 +71,15 @@ async function run() {
       const result = await serviceCollection.find().toArray();
       res.send(result);
     });
+
+    //tutors related apis============================================
+    const tutorCollection = client.db("tutorSheba").collection("tutors");
+
+    //get all tutors
+    app.get("/tutors", async (req, res) => {
+      const result = await tutorCollection.find().toArray();
+      res.send(result);
+    });
   } finally {
   }
 }
